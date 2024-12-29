@@ -37,4 +37,16 @@ img{
 }
 .quizBeendet{
     text-align: center;
+    
+}
+
+.finalHeader{
+    font-size: 30px;
+    margin-bottom: 32px;
+}
+
+.buttonRow{
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
 }

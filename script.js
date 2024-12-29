@@ -27,12 +27,12 @@ let questions=[
         },
 
         {
-        "question":"Was heißt CSS abgekürzt?",
-        "answer_1": "Hypertext Markup Language",
-        "answer_2": "Cascading Style Sheets",
-        "answer_3": "Modestyle",
-        "answer_4": "Kosmetik Produkt",
-        "right_answer": 2
+        "question":"Welche der folgenden Zuweisungen ist syntaktisch nicht korrekt?",
+        "answer_1": "var a = _$;",
+        "answer_2": "var a = $0;",
+        "answer_3": "var a = !!0;",
+        "answer_4": "var a = &_0;",
+        "right_answer": 4
         },
         
         {
@@ -92,10 +92,11 @@ let questions=[
 
 
 ];
+
 let rightQuestions=0;
-
 let currentQuestion=0;
-
+let audioSuccess=new Audio('sound/right.mp3');
+let audioFalse=new Audio('sound/false.mp3');
 
 
 
@@ -107,30 +108,21 @@ function init(){
 
 function showQuestion(){
 
-    if (currentQuestion>= questions.length){
-        document.getElementById('endScreen').style='';
-        document.getElementById('questionBody').style='display:none';
-
-        document.getElementById('amountOfQuestions').innerHTML=questions.length;
-        document.getElementById('amountOfRightQuestions').innerHTML=rightQuestions;
-
+    if (gameIsOver()){
+        showEndscreen();
     }else{
-    let question=questions[currentQuestion];
-
-    document.getElementById('questionNumber').innerHTML=currentQuestion+1;
-    document.getElementById('questionText').innerHTML=question['question'];
-    document.getElementById('answer_1').innerHTML=question['answer_1'];
-    document.getElementById('answer_2').innerHTML=question['answer_2'];
-    document.getElementById('answer_3').innerHTML=question['answer_3'];
-    document.getElementById('answer_4').innerHTML=question['answer_4'];
-
+        updateProgressBar();
+        updateNewQuestion();
+    }
 }
 
+function gameIsOver(){
+    return currentQuestion>= questions.length;
 }
+
 
 function answer(selection){
     let question=questions[currentQuestion];
-    console.log('Selected answer is', selection);
     let SelectedQuestionNumber=selection.slice(-1);
 
     let idOfRightAnswer=`answer_${question['right_answer']}`;
@@ -138,10 +130,12 @@ function answer(selection){
 
     if (SelectedQuestionNumber==question['right_answer']){
         document.getElementById(selection).parentNode.classList.add('bg-success');
+        audioSuccess.play();
         rightQuestions++;
     }else{
         document.getElementById(selection).parentNode.classList.add('bg-danger');
         document.getElementById(idOfRightAnswer).parentNode.classList.add('bg-success');
+        audioFalse.play();
     }
     document.getElementById('nextButton').disabled=false;
 
@@ -164,4 +158,42 @@ function resetAnswerButton(){
     document.getElementById('answer_3').parentNode.classList.remove('bg-success');
     document.getElementById('answer_4').parentNode.classList.remove('bg-danger');
     document.getElementById('answer_4').parentNode.classList.remove('bg-success');
+}
+
+function restartGame(){
+    document.getElementById('headerImage').src='./img/quiz.jpg';
+    document.getElementById('questionBody').style='';
+    document.getElementById('endScreen').style='display:none';
+    rightQuestions=0;
+    currentQuestion=0;
+    init();
+
+
+
+}
+
+function showEndscreen(){
+    document.getElementById('endScreen').style='';
+    document.getElementById('questionBody').style='display:none';
+    document.getElementById('amountOfQuestions').innerHTML=questions.length;
+    document.getElementById('amountOfRightQuestions').innerHTML=rightQuestions;
+    document.getElementById('headerImage').src='./img/trophy.png';
+}
+
+function updateNewQuestion(){
+    let question=questions[currentQuestion];
+
+    document.getElementById('questionNumber').innerHTML=currentQuestion+1;
+    document.getElementById('questionText').innerHTML=question['question'];
+    document.getElementById('answer_1').innerHTML=question['answer_1'];
+    document.getElementById('answer_2').innerHTML=question['answer_2'];
+    document.getElementById('answer_3').innerHTML=question['answer_3'];
+    document.getElementById('answer_4').innerHTML=question['answer_4'];
+}
+
+function updateProgressBar(){
+    let percent=(currentQuestion+1)/questions.length;
+    percent=Math.round(percent*100);
+    document.getElementById('progressBar').innerHTML=`${percent}%`;
+    document.getElementById('progressBar').style=`width:${percent}%`;
 }
